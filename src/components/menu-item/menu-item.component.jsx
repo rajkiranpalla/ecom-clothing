@@ -16,4 +16,6 @@ const MenuItem = ({ title, imageUrl, size ,linkUrl, history, match }) => (
     </div>
 )
 
+//withrouter component is from react-router-dom which wil help us to access the histroy, match and location of the route 
+//by wrapping the child inside it. this makes the menuitem component a higher order component
 export default withRouter(MenuItem);
