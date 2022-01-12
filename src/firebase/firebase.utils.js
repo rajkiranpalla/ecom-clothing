@@ -3,7 +3,8 @@ import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-import { getAuth,GoogleAuthProvider,signInWithPopup } from "firebase/auth";
+import { getAuth,GoogleAuthProvider,signInWithPopup,createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc ,getFirestore, setDoc} from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -17,8 +18,38 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+//getAuth
 export const auth = getAuth();
 
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({prompt:'select_account'});
 export const signInWithGoogle = () => signInWithPopup(auth,provider);
+
+//getFirestore
+const db = getFirestore();
+
+export const createUserProfileDocument = async (userAuth, additionalData) => {
+  if(!userAuth) return;
+  const userRef = doc(db,`users/${userAuth.uid}`);
+  const userSnap = await getDoc(userRef);
+  if (!userSnap.exists()) {
+    const {displayName,email} = userAuth;
+    const createdTimeStamp = new Date();
+    try{
+      await setDoc(userRef,{
+        displayName,
+        email,
+        createdTimeStamp,
+        ...additionalData
+      });
+    }catch(error){
+      console.log('failed to create user in database',error);
+    }
+  }
+  return userRef;
+}
+
+export const createUserWithEmailandPassword = async (email,password) => {
+  return await createUserWithEmailAndPassword(auth,email,password);
+}
