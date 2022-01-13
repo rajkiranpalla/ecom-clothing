@@ -3,8 +3,8 @@ import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-import { getAuth,GoogleAuthProvider,signInWithPopup,createUserWithEmailAndPassword,signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc ,getFirestore, setDoc} from "firebase/firestore";
+import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -22,43 +22,55 @@ const app = initializeApp(firebaseConfig);
 //getAuth
 export const auth = getAuth();
 
+// google authentication support code
 const provider = new GoogleAuthProvider();
-provider.setCustomParameters({prompt:'select_account'});
-export const signInWithGoogle = () => signInWithPopup(auth,provider);
+provider.setCustomParameters({ prompt: 'select_account' });
+export const signInWithGoogle = () => {
+  try {
+    signInWithPopup(auth, provider);
+  } catch (error) {
+    console.log(error);
+  }
+}
 
-//getFirestore
+//getFirestore db
 const db = getFirestore();
 
 export const createUserProfileDocument = async (userAuth, additionalData) => {
-  if(!userAuth) return;
-  const userRef = doc(db,`users/${userAuth.uid}`);
+  if (!userAuth) return;
+  const userRef = doc(db, `users/${userAuth.uid}`);
   const userSnap = await getDoc(userRef);
   if (!userSnap.exists()) {
-    const {displayName,email} = userAuth;
+    const { displayName, email } = userAuth;
     const createdTimeStamp = new Date();
-    try{
-      await setDoc(userRef,{
+    try {
+      await setDoc(userRef, {
         displayName,
         email,
         createdTimeStamp,
         ...additionalData
       });
-    }catch(error){
-      console.log('failed to create user in database',error);
+    } catch (error) {
+      console.log('failed to create user in database', error);
     }
   }
   return userRef;
 }
 
-export const createUserWithEmailandPassword = async (email,password) => {
-  return await createUserWithEmailAndPassword(auth,email,password);
-}
-
-export const signInWithEmailandPassword = async (email,password) => {
-  try{
-    return await signInWithEmailAndPassword(auth,email,password);
-  }catch(error){
+//Method to create user with email and password
+export const createUserWithEmailandPassword = async (email, password) => {
+  try {
+    return await createUserWithEmailAndPassword(auth, email, password);
+  } catch (error) {
     console.log(error);
   }
+}
+
+//method to login user using email and password
+export const signInWithEmailandPassword = async (email, password) => {
+  try {
+    return await signInWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    console.log(error);
   }
-  
+}
