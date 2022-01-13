@@ -1,6 +1,6 @@
 import './App.css';
 import { Homepage } from './pages/homepage/Homepage.component';
-import { Switch,Route } from 'react-router-dom';
+import { Switch,Route,Redirect} from 'react-router-dom';
 import {ShopPage} from './pages/shop/shop.component';
 import Header from './components/header/header.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
@@ -43,7 +43,7 @@ class App extends Component{
         <Switch>
         <Route exact path='/' component={Homepage} />
         <Route exact path='/shop' component={ShopPage} />
-        <Route exact path='/signin' component={SignInAndSignUpPage} />
+        <Route exact path='/signin' render={() => this.props.currentUser ? <Redirect to="/" /> : <SignInAndSignUpPage />} />
         </Switch>
       </div>
     );
@@ -61,4 +61,7 @@ that takes user as a parameter and when called it dispatches a action
 const mapDispatchToProps = (dispatch) => ({
   setCurrentUser: (user) => dispatch(setCurrentUser(user)) 
 })
-export default connect(null,mapDispatchToProps)(App);
+const mapStateToProps = (state) => ({
+  currentUser : state.user.currentUser
+});
+export default connect(mapStateToProps,mapDispatchToProps)(App);
