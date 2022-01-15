@@ -8,7 +8,7 @@ import {auth,createUserProfileDocument} from './firebase/firebase.utils';
 import {Component} from 'react';
 import {onSnapshot} from "firebase/firestore";
 import {connect } from 'react-redux';
-import {setCurrentUser} from './redux/user/user-actions';
+import {setCurrentUser} from './redux/user/user.actions';
 class App extends Component{
 
   unsubscribeFromAuth = null;
