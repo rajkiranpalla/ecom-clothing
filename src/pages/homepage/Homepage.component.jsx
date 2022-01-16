@@ -1,8 +1,10 @@
 
 import './Homepage.styles.scss';
 import {DirectoryMenu} from '../../components/directory-menu/directory-menu.component';
-export const Homepage = () => (
+const Homepage = () => (
     <div className ='homepage'>
        <DirectoryMenu/>
     </div>
 )
+
+export default Homepage;
